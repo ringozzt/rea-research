@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>REA 调研报告</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f5f2;
+      --surface: #ffffff;
+      --surface-2: #e9ece7;
+      --ink: #151914;
+      --muted: #5d665d;
+      --line: #cbd1c9;
+      --line-strong: #aab3a8;
+      --green: #156b49;
+      --green-soft: #dcefe5;
+      --orange: #d65524;
+      --orange-soft: #fae5da;
+      --blue: #225fa7;
+      --blue-soft: #e0ebf7;
+      --code-bg: #121813;
+      --code-ink: #d9eadc;
+      --shadow: 0 12px 30px rgba(25, 34, 27, .08);
+      --max: 1160px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d110e;
+        --surface: #151a16;
+        --surface-2: #1d251f;
+        --ink: #eef3ed;
+        --muted: #abb7ac;
+        --line: #303b32;
+        --line-strong: #475448;
+        --green: #7bd4a4;
+        --green-soft: #183629;
+        --orange: #ff9165;
+        --orange-soft: #40251c;
+        --blue: #84b9f2;
+        --blue-soft: #192d45;
+        --code-bg: #080b09;
+        --code-ink: #d9eadc;
+        --shadow: 0 12px 30px rgba(0, 0, 0, .22);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 16px;
+      line-height: 1.72;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    a:hover { text-decoration-thickness: 2px; }
+    code, .mono { font-family: "IBM Plex Mono", monospace; }
+    .progress { position: fixed; z-index: 50; left: 0; top: 0; height: 3px; width: 0; background: var(--orange); }
+    .mast {
+      border-bottom: 1px solid var(--line);
+      padding: 22px 24px 18px;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+    }
+    .mast-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; gap: 24px; align-items: baseline; }
+    .mast .stamp { color: var(--muted); font-size: 13px; }
+    .mast .status { font: 600 12px/1 "IBM Plex Mono", monospace; color: var(--green); }
+    .hero { max-width: var(--max); margin: 0 auto; padding: clamp(54px, 8vw, 110px) 24px 42px; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .9fr); gap: clamp(36px, 7vw, 88px); align-items: end; }
+    .kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font: 600 12px/1.2 "IBM Plex Mono", monospace; color: var(--green); }
+    .kicker::before { content: ""; width: 36px; border-top: 2px solid currentColor; }
+    h1 { margin: 0; max-width: 820px; font-size: clamp(44px, 7vw, 82px); line-height: .99; letter-spacing: -.055em; font-weight: 800; }
+    h1 em { color: var(--orange); font-style: normal; }
+    .deck { max-width: 760px; margin: 27px 0 0; color: var(--muted); font-size: clamp(18px, 2vw, 22px); line-height: 1.62; }
+    .verdict {
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border-radius: 4px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+    }
+    .verdict .prompt { color: #7bd4a4; }
+    .verdict .answer { margin: 16px 0; color: white; font-size: 15px; line-height: 1.55; }
+    .verdict .cursor { display: inline-block; width: 8px; height: 1em; margin-left: 3px; background: #ff9165; vertical-align: -2px; animation: blink 1.1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cursor { animation: none !important; } }
+    .metrics { max-width: var(--max); margin: 0 auto; padding: 0 24px 56px; display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+    .metric { padding: 20px 22px; border-left: 1px solid var(--line); }
+    .metric:last-child { border-right: 1px solid var(--line); }
+    .metric strong { display: block; font: 600 clamp(24px, 3vw, 34px)/1 "IBM Plex Mono", monospace; letter-spacing: -.04em; }
+    .metric span { display: block; margin-top: 9px; font-size: 13px; color: var(--muted); }
+    .shell { max-width: var(--max); margin: 0 auto; padding: 68px 24px 110px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: clamp(46px, 7vw, 92px); }
+    .toc { position: sticky; top: 24px; align-self: start; }
+    .toc-title { margin-bottom: 13px; font: 600 11px/1.2 "IBM Plex Mono", monospace; color: var(--muted); }
+    .toc a { display: block; padding: 7px 0 7px 13px; border-left: 1px solid var(--line); color: var(--muted); text-decoration: none; font-size: 13px; line-height: 1.35; transition: color .2s, border-color .2s; }
+    .toc a.active { color: var(--ink); border-left: 3px solid var(--orange); padding-left: 11px; font-weight: 600; }
+    article { min-width: 0; }
+    section { scroll-margin-top: 24px; margin-bottom: 86px; }
+    .section-no { font: 600 12px/1 "IBM Plex Mono", monospace; color: var(--orange); margin-bottom: 10px; }
+    h2 { margin: 0 0 26px; font-size: clamp(31px, 4vw, 49px); line-height: 1.15; letter-spacing: -.04em; }
+    h3 { margin: 38px 0 13px; font-size: 21px; line-height: 1.35; letter-spacing: -.018em; }
+    p { margin: 0 0 18px; }
+    .lead { font-size: 19px; line-height: 1.68; }
+    .note { color: var(--muted); font-size: 14px; }
+    .tag { display: inline-block; padding: 4px 7px; border-radius: 3px; margin-right: 7px; font: 600 10px/1 "IBM Plex Mono", monospace; vertical-align: 2px; }
+    .tag.primary { background: var(--green-soft); color: var(--green); }
+    .tag.secondary { background: var(--blue-soft); color: var(--blue); }
+    .tag.open { background: var(--orange-soft); color: var(--orange); }
+    .cite { font: 600 10px/1 "IBM Plex Mono", monospace; text-decoration: none; margin-left: 3px; vertical-align: super; }
+    .thesis {
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--line);
+      padding: 24px 0 26px;
+      margin: 30px 0;
+      font-size: clamp(24px, 3vw, 35px);
+      line-height: 1.38;
+      letter-spacing: -.025em;
+      font-weight: 700;
+    }
+    .flow { display: grid; grid-template-columns: 1fr 42px 1fr 42px 1fr; align-items: stretch; margin: 34px 0; }
+    .flow-step { background: var(--surface); border: 1px solid var(--line); padding: 22px; min-height: 148px; }
+    .flow-step .num { color: var(--orange); font: 600 12px/1 "IBM Plex Mono", monospace; }
+    .flow-step h3 { margin: 22px 0 6px; font-size: 19px; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .arrow { display: grid; place-items: center; color: var(--muted); font: 24px/1 "IBM Plex Mono", monospace; }
+    .layer-stack { margin: 30px 0; display: grid; gap: 6px; }
+    .layer { display: grid; grid-template-columns: 150px 1fr; border: 1px solid var(--line); background: var(--surface); }
+    .layer-label { padding: 17px; background: var(--surface-2); font: 600 12px/1.3 "IBM Plex Mono", monospace; border-right: 1px solid var(--line); }
+    .layer-body { padding: 15px 18px; font-size: 14px; }
+    .layer.highlight { border-color: var(--green); box-shadow: inset 4px 0 0 var(--green); }
+    .layer.highlight .layer-label { color: var(--green); }
+    .callout { margin: 28px 0; padding: 23px 25px; border: 1px solid var(--line-strong); background: var(--surface); box-shadow: var(--shadow); }
+    .callout strong { display: block; margin-bottom: 7px; }
+    .callout.warning { border-color: var(--orange); box-shadow: none; }
+    .callout code { font-size: 13px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 24px 0; }
+    .card { padding: 23px; border-top: 2px solid var(--line-strong); background: var(--surface); }
+    .card h3 { margin: 0 0 11px; font-size: 18px; }
+    .card p { margin: 0; font-size: 14px; color: var(--muted); }
+    .card.accent { border-color: var(--orange); }
+    .timeline { margin: 30px 0; border-top: 1px solid var(--line); }
+    .event { display: grid; grid-template-columns: 112px 1fr; gap: 22px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .event time { font: 600 12px/1.4 "IBM Plex Mono", monospace; color: var(--green); }
+    .event strong { display: block; margin-bottom: 4px; }
+    .event p { margin: 0; color: var(--muted); font-size: 14px; }
+    .bars { margin: 32px 0; }
+    .barrow { display: grid; grid-template-columns: 90px 1fr 110px; gap: 12px; align-items: center; margin: 12px 0; }
+    .barrow .date { font: 500 11px/1 "IBM Plex Mono", monospace; color: var(--muted); }
+    .track { height: 10px; background: var(--surface-2); }
+    .fill { height: 100%; background: var(--green); min-width: 2px; }
+    .value { text-align: right; font: 600 12px/1 "IBM Plex Mono", monospace; }
+    .case { margin: 32px 0 48px; padding-top: 25px; border-top: 2px solid var(--ink); }
+    .case-head { display: flex; justify-content: space-between; gap: 22px; align-items: baseline; }
+    .case-head h3 { margin: 0 0 15px; font-size: 27px; }
+    .case-head .kind { font: 500 11px/1 "IBM Plex Mono", monospace; color: var(--muted); white-space: nowrap; }
+    .fact-strip { display: grid; grid-template-columns: repeat(3, 1fr); margin: 23px 0; border: 1px solid var(--line); }
+    .fact { padding: 18px; border-right: 1px solid var(--line); }
+    .fact:last-child { border-right: 0; }
+    .fact strong { font: 600 22px/1 "IBM Plex Mono", monospace; display: block; }
+    .fact span { display: block; color: var(--muted); font-size: 12px; margin-top: 8px; }
+    pre { overflow: hidden; margin: 20px 0; padding: 20px; border-radius: 4px; background: var(--code-bg); color: var(--code-ink); font: 12px/1.72 "IBM Plex Mono", monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .compare { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 13px; }
+    .compare th, .compare td { text-align: left; vertical-align: top; padding: 14px 13px; border-bottom: 1px solid var(--line); }
+    .compare th { color: var(--muted); font: 600 11px/1.2 "IBM Plex Mono", monospace; }
+    .compare td:first-child { font-weight: 700; width: 18%; }
+    .risk-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; margin-top: 26px; }
+    .risk { padding: 25px; background: var(--orange-soft); }
+    .risk.safe { background: var(--green-soft); }
+    .risk h3 { margin: 0 0 12px; }
+    .risk ul, .bullets { margin: 0; padding-left: 20px; }
+    .risk li, .bullets li { margin: 8px 0; }
+    .hard-findings { counter-reset: finding; margin: 30px 0; }
+    .finding { counter-increment: finding; display: grid; grid-template-columns: 54px 1fr; gap: 14px; padding: 19px 0; border-bottom: 1px solid var(--line); }
+    .finding::before { content: "0" counter(finding); font: 600 18px/1.5 "IBM Plex Mono", monospace; color: var(--orange); }
+    .finding strong { display: block; font-size: 17px; }
+    .finding p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+    .sources { font-size: 13px; }
+    .source-group { margin: 28px 0; }
+    .source-group h3 { font: 600 12px/1.2 "IBM Plex Mono", monospace; color: var(--muted); }
+    .sources ol { padding-left: 26px; }
+    .sources li { padding: 6px 0; overflow-wrap: anywhere; }
+    .source-meta { color: var(--muted); }
+    .footer { border-top: 1px solid var(--line); padding: 24px; color: var(--muted); font-size: 12px; }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; gap: 20px; }
+    .mobile-nav { display: none; }
+    @media (max-width: 820px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metric:nth-child(2) { border-right: 1px solid var(--line); }
+      .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .shell { grid-template-columns: 1fr; padding-top: 34px; }
+      .toc { display: none; }
+      .mobile-nav { display: flex; gap: 8px; overflow: hidden; flex-wrap: wrap; margin-bottom: 50px; }
+      .mobile-nav a { padding: 7px 10px; background: var(--surface-2); color: var(--ink); text-decoration: none; font-size: 12px; border-radius: 3px; }
+    }
+    @media (max-width: 620px) {
+      .mast { padding-inline: 18px; }
+      .mast-inner { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .hero { padding: 48px 18px 34px; }
+      h1 { font-size: clamp(39px, 14vw, 60px); }
+      .metrics { padding: 0 18px 42px; }
+      .metric { padding: 17px 13px; }
+      .metric strong { font-size: 23px; }
+      .shell { padding: 34px 18px 82px; }
+      section { margin-bottom: 66px; }
+      h2 { font-size: 32px; }
+      .flow { grid-template-columns: 1fr; gap: 0; }
+      .arrow { height: 34px; transform: rotate(90deg); }
+      .layer { grid-template-columns: 1fr; }
+      .layer-label { border-right: 0; border-bottom: 1px solid var(--line); }
+      .grid2, .risk-grid { grid-template-columns: 1fr; }
+      .event { grid-template-columns: 1fr; gap: 5px; }
+      .barrow { grid-template-columns: 72px 1fr; }
+      .barrow .value { grid-column: 2; text-align: left; }
+      .fact-strip { grid-template-columns: 1fr; }
+      .fact { border-right: 0; border-bottom: 1px solid var(--line); }
+      .fact:last-child { border-bottom: 0; }
+      .case-head { display: block; }
+      .compare, .compare tbody, .compare tr, .compare td { display: block; width: 100%; }
+      .compare thead { display: none; }
+      .compare tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare td { border: 0; padding: 5px 0; }
+      .compare td:first-child { width: auto; font-size: 17px; }
+      .compare td::before { content: attr(data-label); display: block; margin-top: 6px; color: var(--muted); font: 600 10px/1.2 "IBM Plex Mono", monospace; }
+      .footer-inner { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="mast">
+    <div class="mast-inner">
+      <div class="stamp">技术尽调 · 资料快照于 2026-10-11</div>
+      <div class="status">PRIMARY / SECONDARY 分级</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker">REVERSE ENGINEER ANYTHING</div>
+          <h1>它没有<em>“逆向一切”</em>，<br>它在重做逆向工程的入口</h1>
+          <p class="deck">REA 不是新的反编译器，而是把 Ghidra、Hopper、IDA、JADX、浏览器与运行时证据，统一变成 coding agent 能调用、能追问、能复核的工作流。</p>
+        </div>
+        <div class="verdict" aria-label="核心判断">
+          <div><span class="prompt">$</span> verdict --short</div>
+          <div class="answer">Agent 化编排层，<br>不是“闭源 App 一键克隆器”。<span class="cursor"></span></div>
+          <div># strongest moat: evidence contract<br># biggest risk: dual-use + false confidence</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics" aria-label="关键指标">
+      <div class="metric"><strong>79,124</strong><span>GitHub stars · 10/11 快照</span></div>
+      <div class="metric"><strong>133</strong><span>MCP tools · v5.0.0 官方文档</span></div>
+      <div class="metric"><strong>26</strong><span>analysis providers · 二手统计</span></div>
+      <div class="metric"><strong>8 days</strong><span>约 40 → 57k stars · 二手统计</span></div>
+    </div>
+
+    <div class="shell">
+      <aside class="toc" aria-label="目录">
+        <div class="toc-title">REPORT INDEX</div>
+        <a href="#verdict">01 / 先给结论</a>
+        <a href="#architecture">02 / 架构到底是什么</a>
+        <a href="#coverage">03 / 它能分析什么</a>
+        <a href="#traction">04 / 为什么突然爆了</a>
+        <a href="#cases">05 / 三个案例的证明力</a>
+        <a href="#trust">06 / 信任与安全</a>
+        <a href="#limits">07 / 边界与法律</a>
+        <a href="#landscape">08 / 竞争格局</a>
+        <a href="#implications">09 / 真正的影响</a>
+        <a href="#ecosystem">10 / 采用与生态</a>
+        <a href="#sources">来源</a>
+      </aside>
+
+      <article>
+        <nav class="mobile-nav" aria-label="移动目录">
+          <a href="#verdict">结论</a><a href="#architecture">架构</a><a href="#traction">增长</a><a href="#cases">案例</a><a href="#trust">安全</a><a href="#landscape">对比</a><a href="#sources">来源</a>
+        </nav>
+
+        <section id="verdict">
+          <div class="section-no">01 — EXECUTIVE VERDICT</div>
+          <h2>先去掉名字制造的幻觉</h2>
+          <p class="lead"><span class="tag primary">PRIMARY</span>REA 的官方定义是：“一个用于二进制、应用与运行时行为逆向工程的 MCP。”它给 Claude Code、Cursor、Codex 等 agent 一套统一工具，让 agent 在没有源代码时检查、解释，并基于证据帮助重建功能。<a class="cite" href="https://github.com/morluto/rea" target="_blank" rel="noopener">[P1]</a></p>
+          <div class="thesis">它改变的是<strong>逆向工程的交互层</strong>：从专家操作 GUI，变成 agent 围绕证据循环。底层反编译能力仍然来自成熟引擎。</div>
+          <p>所以，“能逆向工程”是真的；“输入一个 App，自动吐出原始源码”是错的。REA 官方明确不承诺恢复原始源代码，也不承诺整包克隆。它返回伪代码、汇编、模块关系和运行时观测，由 agent 再写实现。<a class="cite" href="https://github.com/morluto/rea" target="_blank" rel="noopener">[P1]</a></p>
+          <div class="grid2">
+            <div class="card accent"><h3>真正的新东西</h3><p>跨工具统一抽象、可追溯 evidence bundle、limitations / unknowns、版本比较，以及把“找功能 → 下钻 → 验证”产品化。</p></div>
+            <div class="card"><h3>不是它发明的</h3><p>反编译、反汇编、APK 解包、固件提取、浏览器网络观测。REA 调用现有 provider，不替代它们。</p></div>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <div class="section-no">02 — ARCHITECTURE</div>
+          <h2>decompile → trace → recreate</h2>
+          <div class="flow" aria-label="REA 工作流">
+            <div class="flow-step"><span class="num">01</span><h3>检查目标</h3><p>Agent 经 MCP / CLI 选择目标与 provider，读取伪代码、调用关系、资源或运行时观测。</p></div>
+            <div class="arrow">→</div>
+            <div class="flow-step"><span class="num">02</span><h3>沿证据追踪</h3><p>每次结果附 evidence_id、来源、限制和未知；后续问题可以引用早先 finding。</p></div>
+            <div class="arrow">→</div>
+            <div class="flow-step"><span class="num">03</span><h3>重建并验证</h3><p>Agent 在用户自己的项目里写实现，再用行为测试、字节比较或版本 diff 回证。</p></div>
+          </div>
+
+          <h3>四层结构：REA 占的是中间两层</h3>
+          <div class="layer-stack">
+            <div class="layer"><div class="layer-label">CODING AGENT</div><div class="layer-body">Claude Code / Codex / Cursor / Gemini CLI 等，负责提问、推理、写代码。</div></div>
+            <div class="layer highlight"><div class="layer-label">REA WORKFLOW</div><div class="layer-body"><strong>工作流产品化：</strong> guided prompts、setup / doctor、snapshot 复用、跨层追踪。</div></div>
+            <div class="layer highlight"><div class="layer-label">EVIDENCE CONTRACT</div><div class="layer-body"><strong>结果形状：</strong> result + evidence_id + provenance + confidence + limitations + unknowns。</div></div>
+            <div class="layer"><div class="layer-label">PROVIDERS</div><div class="layer-body">Hopper / Ghidra / IDA / JADX / Binwalk / Unblob / pwntools / CDP / mitmproxy / ADB / JEB / LLDB…</div></div>
+            <div class="layer"><div class="layer-label">TARGETS</div><div class="layer-body">Native、Electron、.NET、APK、firmware、website、HAR、EVM、crash、process behavior。</div></div>
+          </div>
+          <p><span class="tag primary">PRIMARY</span>原生 provider 可在 Hopper、Ghidra、IDA 间切换；REA “rides an existing install”。Ghidra 走打包的 headless script 与隔离临时项目；IDA 基于开源 ida-pro-mcp，并核对原始二进制 SHA-256，避免 agent 静默分析错数据库。<a class="cite" href="https://github.com/morluto/rea/blob/HEAD/docs/installation.md" target="_blank" rel="noopener">[P4]</a></p>
+          <div class="callout">
+            <strong>证据合同为什么比“工具数量”更关键？</strong>
+            普通 MCP wrapper 把 GUI 操作暴露成按钮；REA 试图让每个结论都可引用、可导出、可比较，并主动保留 unknowns。它甚至声明不会伪造进度百分比；文件 hash 与字节矛盾时默认 fail-closed。后两项来自二手技术拆解，方向与官方“evidence + limitations”一致。<a class="cite" href="https://dev.to/itxtayab/an-agent-that-reverse-engineers-by-guessing-is-worse-than-useless-52bg" target="_blank" rel="noopener">[S2]</a>
+          </div>
+        </section>
+
+        <section id="coverage">
+          <div class="section-no">03 — COVERAGE</div>
+          <h2>“Anything” 是路线图，不是现状</h2>
+          <div class="grid2">
+            <div class="card"><h3>Native binaries</h3><p>伪代码、汇编、字符串、符号、调用与引用；Hopper / Ghidra / IDA 三选一。</p></div>
+            <div class="card"><h3>JS / Electron</h3><p>模块、导入、source map、路由、IPC、ASAR 与原生 addon；静态分析可不运行应用。</p></div>
+            <div class="card"><h3>Android / firmware</h3><p>JADX、ADB、JEB、Apktool；固件经 Binwalk / Unblob 切分后转交原生分析。</p></div>
+            <div class="card"><h3>Web / runtime</h3><p>CDP、页面结构、脚本、截图、HAR、mitmproxy、进程输出与文件系统观测。</p></div>
+            <div class="card"><h3>.NET / EVM / ELF</h3><p>CIL 与元数据、EVMole 字节码、pwntools 离线 ELF layout 与 recorded crash。</p></div>
+            <div class="card accent"><h3>仍然难</h3><p>混淆、加壳、反调试、动态生成行为、冷门架构，以及永远不下发到客户端的服务端逻辑。</p></div>
+          </div>
+          <p class="note"><span class="tag primary">PRIMARY</span>目标矩阵与 provider 来自 README / release notes。Windows 原生支持仍窄于 Linux/macOS，部分路径标为 experimental Ghidra-only P0。<a class="cite" href="https://github.com/morluto/rea/releases" target="_blank" rel="noopener">[P2]</a></p>
+        </section>
+
+        <section id="traction">
+          <div class="section-no">04 — TRACTION</div>
+          <h2>爆发是真的，使用规模还没跟上</h2>
+          <div class="timeline">
+            <div class="event"><time>2026-04-14</time><div><strong>betterBinaryMCP 起步</strong><p>二手资料称最初是增强 Hopper 的 MCP server，随后扩成通用平台。<a class="cite" href="https://dev.to/itxtayab/an-agent-that-reverse-engineers-by-guessing-is-worse-than-useless-52bg" target="_blank" rel="noopener">[S2]</a></p></div></div>
+            <div class="event"><time>10-05</time><div><strong>v4.0.x</strong><p>移除若干旧契约，加入 native primitives 与 DOS MZ 分析。</p></div></div>
+            <div class="event"><time>10-07</time><div><strong>v5.0.0 · 133 tools</strong><p>官方安装文档固定检查点；发布后 24 小时约 +2,956 stars（secondary）。</p></div></div>
+            <div class="event"><time>10-08</time><div><strong>v6.0.0 · GitHub Trending #1</strong><p>EVM、ELF、crash、LLDB、Windows PE；同日登顶 trending 的说法来自榜单快照。</p></div></div>
+            <div class="event"><time>10-09</time><div><strong>一天三更</strong><p>6.1 / 6.2 / 6.3 连发，6.3 再次改变 captures/browser/process 契约。</p></div></div>
+            <div class="event"><time>10-11</time><div><strong>v6.4.0 · 79,124 stars</strong><p>ADB、JEB、Apktool；GitHub 页面快照另有 17,066 forks。<a class="cite" href="https://github.com/morluto/rea" target="_blank" rel="noopener">[P1]</a></p></div></div>
+          </div>
+
+          <div class="bars" aria-label="Star 增长快照">
+            <div class="barrow"><span class="date">10-08</span><div class="track"><div class="fill" style="width:13%"></div></div><span class="value">10.4k+</span></div>
+            <div class="barrow"><span class="date">10-09</span><div class="track"><div class="fill" style="width:43%"></div></div><span class="value">34k+</span></div>
+            <div class="barrow"><span class="date">10-10</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="value">57k+</span></div>
+            <div class="barrow"><span class="date">10-11</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="value">79,124</span></div>
+          </div>
+          <div class="callout warning">
+            <strong>别把 star 当部署量</strong>
+            <span class="tag secondary">SECONDARY</span>一份 10 月 10 日视频引用约 19,111 stars 对 1,291 次 npm 周下载；虽然口径与时间点不同，但足以说明热度中包含大量围观。REA 此刻更像“爆款叙事”，还不是被大规模验证的生产基础设施。<a class="cite" href="https://www.youtube.com/watch?v=ygbgiLqKTwA" target="_blank" rel="noopener">[S7]</a>
+          </div>
+        </section>
+
+        <section id="cases">
+          <div class="section-no">05 — SHOWCASES</div>
+          <h2>案例证明了什么，也没证明什么</h2>
+
+          <div class="case">
+            <div class="case-head"><h3>DX-Ball：最强的一条证据链</h3><span class="kind">NATIVE / X86 / 1996</span></div>
+            <p>反编译器初看只给出 <code>FUN_00406400(void)</code> 与 <code>__ftol()</code>。Agent 下钻指令发现参数在 <code>[EBP+8]</code>，沿调用者得到输入语义 <code>20 + 30 × tile_x</code>，再从字节中解出 1.5625 与 500.0。</p>
+            <pre>pan = ((double)x * 1.5625 - 500.0) * dxball_pan_scale</pre>
+            <div class="fact-strip"><div class="fact"><strong>3,205</strong><span>行为测试全部匹配</span></div><div class="fact"><strong>63 / 63</strong><span>重编译函数字节一致</span></div><div class="fact"><strong>33 / 55</strong><span>已维护函数达字节匹配</span></div></div>
+            <p class="note"><span class="tag primary">PRIMARY</span>这证明“反编译缺口 → 指令补全 → 常量读取 → C 重写 → 行为与字节双验证”闭环可行。它没有证明整程序自动克隆：目标未混淆、函数粒度明确、还复刻了 VC4.0 工具链。<a class="cite" href="https://rea.tools/showcase/dx-ball/" target="_blank" rel="noopener">[P6]</a></p>
+          </div>
+
+          <div class="case">
+            <div class="case-head"><h3>Notion：跨 Electron 进程边界</h3><span class="kind">ELECTRON / IPC / ASAR</span></div>
+            <p>REA 沿 <code>clipboard.write</code> → preload 的 <code>invokerInMain</code> → <code>ipcRenderer.invoke</code> → 主进程 <code>ipcMain.handle</code> 追踪复制链路。它还发现复制 HTML 中的 <code>&lt;!-- notionvc: &lt;copy-id&gt; --&gt;</code>，用于找回本地结构化 block 数据。</p>
+            <p class="note"><span class="tag primary">PRIMARY</span>它证明统一工具可以跨 renderer / preload / main / SQLite utility process 追踪；但官网明确说展示代码经过简化，probe 描述的是受控测试，不是真实桌面会话的完整证明。<a class="cite" href="https://rea.tools/showcase/notion/" target="_blank" rel="noopener">[P7]</a></p>
+          </div>
+
+          <div class="case">
+            <div class="case-head"><h3>“Vault test”：只能算演示</h3><span class="kind">THIRD-PARTY DEMO</span></div>
+            <p><span class="tag secondary">SECONDARY</span>第三方视频自述这是演示者自己的 demo，屏幕上的函数地址和汇编为简化示意。它不能承担“真实闭源应用已被完整还原”的证明责任。<a class="cite" href="https://www.youtube.com/watch?v=ygbgiLqKTwA" target="_blank" rel="noopener">[S7]</a></p>
+          </div>
+
+          <div class="callout"><strong>独立复现的真实上限</strong><span class="tag secondary">SECONDARY</span>kingy.ai 用 REA 6.0.0 重建 Notes 的 CSV 导出，14 个测试全部通过；但作者明确说，这“不证明对不透明二进制的准确性，也不证明完整 App 克隆”。同次实验里，1,648B 源码产生约 907KB JSON evidence，显示证据输出很重。<a class="cite" href="https://kingy.ai/blog/reverse-engineer-anything-ai-rea-guide/" target="_blank" rel="noopener">[S4]</a></div>
+        </section>
+
+        <section id="trust">
+          <div class="section-no">06 — TRUST & SECURITY</div>
+          <h2>本地分析，不等于全程私密</h2>
+          <div class="risk-grid">
+            <div class="risk safe"><h3>它保护了什么</h3><ul><li>目标二进制在本机分析，不上传 REA 托管服务。</li><li>Provider bridge 用随机 capability token 与当前用户 Unix socket 认证。</li><li>Ghidra 用隔离临时项目与私有 home/cache/runtime 目录。</li><li>IDA 核对 SHA-256，避免静默分析错误数据库。</li></ul></div>
+            <div class="risk"><h3>它没保护什么</h3><ul><li>不是恶意样本沙箱。</li><li>Provider 仍以当前 OS 用户权限解析目标。</li><li>工具结果会交给 agent，再受模型供应商数据政策约束。</li><li>Runtime capture 可能直接运行目标。</li></ul></div>
+          </div>
+          <div class="thesis">SECURITY.md 原文：<br>“This is not a sandbox.”<a class="cite" href="https://github.com/morluto/rea/blob/HEAD/SECURITY.md" target="_blank" rel="noopener">[P3]</a></div>
+          <p>对企业最关键的合规问题不是“二进制有没有上传 REA”，而是<strong>反编译结果会不会被云模型看见</strong>。处理专有代码时，需要匹配模型供应商的数据政策；处理不可信目标时，应优先隔离 VM、本地模型，或只做静态分析。</p>
+          <h3>容易踩的工程坑</h3>
+          <ul class="bullets">
+            <li><strong>Node：</strong>支持 22.x（≥22.19）、24.x（≥24.11）、26+；不支持 23、25、预发布版。REA 不替你升级 Node/npm/Homebrew。<a class="cite" href="https://github.com/morluto/rea/blob/HEAD/docs/installation.md" target="_blank" rel="noopener">[P4]</a></li>
+            <li><strong>Provider：</strong>原生二进制必须自备 Hopper / Ghidra / IDA 之一；APK 需 JDK + JADX；firmware 需 Linux 与 Binwalk/Unblob。</li>
+            <li><strong>超时：</strong>二手实测提到 Ghidra 首次查询可到 330 秒，而某些 MCP client 默认只有 60 秒。<a class="cite" href="https://www.devpik.com/open-source/rea" target="_blank" rel="noopener">[S3]</a></li>
+            <li><strong>输出：</strong>“150MB App → 577MB JSON”只有视频口径，未获文本证实；可以确认的只有 1,648B → 约 907KB 的独立实验。</li>
+          </ul>
+        </section>
+
+        <section id="limits">
+          <div class="section-no">07 — LIMITS & LAW</div>
+          <h2>技术边界之外，还有授权边界</h2>
+          <div class="grid2">
+            <div class="card"><h3>美国</h3><p><span class="tag secondary">BACKGROUND</span>DMCA §1201(f) 为实现独立程序互操作性提供有限规避例外；Sega v. Accolade、Sony v. Connectix 支持特定合理目的下的中间复制。但许可条款与 CFAA 风险仍取决于具体事实。</p></div>
+            <div class="card"><h3>欧盟</h3><p><span class="tag secondary">BACKGROUND</span>2009/24/EC 第 6 条仅在实现互操作所必需时允许反编译：合法用户、信息不易获得、限于必要部分、不得开发“表达上实质相似”的程序。</p></div>
+            <div class="card"><h3>中国</h3><p><span class="tag open">OPEN QUESTION</span>本次未深挖一手法源。通识上受著作权、商业秘密、技术措施与许可合同共同约束；不能把“学习研究通常被容忍”当成普遍免责。</p></div>
+            <div class="card accent"><h3>REA 的立场</h3><p><span class="tag primary">PRIMARY</span>只支持合法研究、分析与重建；用户负责取得授权并遵守法律。项目还明确没有发行或背书任何 REA 加密货币 / token。<a class="cite" href="https://github.com/morluto/rea" target="_blank" rel="noopener">[P1]</a></p></div>
+          </div>
+
+          <h3>为什么双重用途争议在这个时间点爆炸</h3>
+          <p><span class="tag secondary">SECONDARY</span>2026 年 10 月初，媒体报道攻击者用中国开源 agent Artex AI 攻击至少 7 家韩国金融机构，约 68,000 人信息泄露；REA 5.0.0 恰在 10 月 7 日发布，次日登顶 trending。两者没有直接关联，但共享同一个叙事：<strong>agent + 开源工具正在压低攻防门槛</strong>。<a class="cite" href="https://www.wsj.com/world/asia/hackers-use-chinese-ai-tool-to-hit-south-korean-banks-exposing-new-risk-5d4d3885" target="_blank" rel="noopener">[S11]</a></p>
+          <div class="callout warning"><strong>不是法律意见</strong>逆向是否合法高度依赖目标、授权、许可条款、用途、复制范围与法域。最稳妥的安全区仍是：自己的软件、开源二进制、CTF、或明确获授权的目标。</div>
+        </section>
+
+        <section id="landscape">
+          <div class="section-no">08 — LANDSCAPE</div>
+          <h2>工具数不是护城河，调查连续性才可能是</h2>
+          <table class="compare">
+            <thead><tr><th>方案</th><th>底层引擎</th><th>覆盖</th><th>Agent 输出形状</th></tr></thead>
+            <tbody>
+              <tr><td>REA</td><td data-label="底层引擎">Hopper / Ghidra / IDA + 20 余 providers</td><td data-label="覆盖">Native、JS/Electron、.NET、APK、firmware、Web、HAR、EVM、crash</td><td data-label="输出">Evidence bundle；limitations / unknowns；可引用、导入导出、比较</td></tr>
+              <tr><td>ghidra-mcp</td><td data-label="底层引擎">Ghidra 单引擎</td><td data-label="覆盖">Ghidra 打开的二进制</td><td data-label="输出">工具返回为主；v6.0.0 标称 272 MCP tools<a class="cite" href="https://github.com/bethington/ghidra-mcp/releases" target="_blank" rel="noopener">[S10]</a></td></tr>
+              <tr><td>传统 RE 工具</td><td data-label="底层引擎">各自独立</td><td data-label="覆盖">每个工具专精一域</td><td data-label="输出">面向人类专家的 GUI、伪代码、汇编与脚本接口</td></tr>
+            </tbody>
+          </table>
+          <p>REA v5 的 133 tools 甚至少于 ghidra-mcp v6 的 272。数字不能说明平台能力。REA 的差异是：同一个 agent 能从 Electron renderer 追到 main，再追到 native addon，而不必在多个工具与上下文之间人工搬运证据。</p>
+          <div class="callout"><strong>最准确的类比</strong>如果 Ghidra/IDA 是数据库引擎，REA 更像查询规划器 + provenance 层 + 开发者工作流。它依赖底座，却能用跨底座的连续上下文创造新价值。</div>
+        </section>
+
+        <section id="implications">
+          <div class="section-no">09 — IMPLICATIONS</div>
+          <h2>“旧的保护是成本”</h2>
+          <p class="lead">过去，逆向的防线之一是专家小时：即使逻辑随客户端交付，定位、理解、验证也足够贵。REA 把这条链压缩成 agent 可执行的循环。它没有让逆向变成零成本，但让更多人有能力开始。</p>
+          <h3>软件厂商还剩下什么防线</h3>
+          <div class="grid2">
+            <div class="card"><h3>技术防线</h3><p>混淆、加壳、反分析、动态行为、冷门架构。它们不是绝对保护，却继续抬高验证成本。</p></div>
+            <div class="card"><h3>架构防线</h3><p>服务端逻辑与数据不随客户端发货。SaaS 的护城河不在本地二进制里。</p></div>
+            <div class="card"><h3>法律防线</h3><p>版权、商业秘密、技术措施与 license 条款，仍能把“能做”与“可合法商业化”分开。</p></div>
+            <div class="card"><h3>商业防线</h3><p>网络效应、品牌、分发、持续交付与执行速度。复制一个函数，不等于复制一个业务。</p></div>
+          </div>
+          <h3>五条硬发现</h3>
+          <div class="hard-findings">
+            <div class="finding"><div><strong>它是“反编译器的 agent 化编排层”</strong><p>核心不是新算法，而是统一 provider、证据合同和跨层追踪。</p></div></div>
+            <div class="finding"><div><strong>3,205 / 63 是单函数闭环，不是整 App 克隆</strong><p>最强 showcase 同时也是边界声明。</p></div></div>
+            <div class="finding"><div><strong>“This is not a sandbox” 是官方白纸黑字</strong><p>本地运行与安全隔离是两回事；本地分析与模型隐私也是两回事。</p></div></div>
+            <div class="finding"><div><strong>79k stars 与约 1.3k npm 周下载形成巨大温差</strong><p>热度属实，真实采用仍待观察；二者口径与时间点不同，只能定性比较。</p></div></div>
+            <div class="finding"><div><strong>它把闭源客户端的壁垒从“看不懂”推向“藏不住”</strong><p>壁垒会进一步迁往服务端、数据、网络效应与迭代速度。</p></div></div>
+          </div>
+        </section>
+
+        <section id="ecosystem">
+          <div class="section-no">10 — ECOSYSTEM</div>
+          <h2>采用路径已经很产品化</h2>
+          <pre># 推荐：给已检测到的 coding agent 配置 REA
+npx rea-agents setup
+
+# 全局 CLI
+npm install --global rea-agents
+rea doctor
+
+# 零配置分析 JS / Electron
+npx -y rea-agents@latest analyze-javascript-application /absolute/path --json</pre>
+          <p><span class="tag primary">PRIMARY</span>官方列出 14 个 agent 客户端，包括 Claude Code、Claude Desktop、Codex、Cursor、Gemini CLI、Windsurf、Devin、OpenCode、GitHub Copilot CLI、VS Code 等。<code>rea doctor</code> 可以审计客户端注册、skill 与 provider；setup 会先展示计划、备份配置、原子写入，安装 Hopper 还需单独批准。<a class="cite" href="https://github.com/morluto/rea/blob/HEAD/docs/installation.md" target="_blank" rel="noopener">[P4]</a></p>
+          <div class="callout"><strong>采用建议</strong>如果只是 Electron / JS 静态分析，可以从零配置 CLI 开始；如果分析 native，先选定并跑通一个 provider，再接 agent。不要一上来追求“133 个工具全装齐”。</div>
+        </section>
+
+        <section id="sources" class="sources">
+          <div class="section-no">SOURCES</div>
+          <h2>来源与未决问题</h2>
+          <p class="note">Primary 为项目 README、releases、SECURITY、安装文档与官方 showcase；Secondary 为媒体、博客、独立测试和视频。数值按抓取日保留，不当作当前值。</p>
+          <div class="source-group">
+            <h3>PRIMARY</h3>
+            <ol>
+              <li id="p1"><a href="https://github.com/morluto/rea" target="_blank" rel="noopener">github.com/morluto/rea</a> <span class="source-meta">— README、License、stars/forks 快照、FAQ、Disclaimer</span></li>
+              <li><a href="https://github.com/morluto/rea/releases" target="_blank" rel="noopener">github.com/morluto/rea/releases</a> <span class="source-meta">— v4.0.0–v6.4.0 时间线</span></li>
+              <li><a href="https://github.com/morluto/rea/blob/HEAD/SECURITY.md" target="_blank" rel="noopener">github.com/morluto/rea/blob/HEAD/SECURITY.md</a> <span class="source-meta">— 非沙箱、安全边界</span></li>
+              <li><a href="https://github.com/morluto/rea/blob/HEAD/docs/installation.md" target="_blank" rel="noopener">github.com/morluto/rea/blob/HEAD/docs/installation.md</a> <span class="source-meta">— 安装、Node、133 tools、doctor</span></li>
+              <li><a href="https://rea.tools/" target="_blank" rel="noopener">rea.tools</a> <span class="source-meta">— 产品定位与示例</span></li>
+              <li><a href="https://rea.tools/showcase/dx-ball/" target="_blank" rel="noopener">rea.tools/showcase/dx-ball/</a> <span class="source-meta">— DX-Ball 证据链</span></li>
+              <li><a href="https://rea.tools/showcase/notion/" target="_blank" rel="noopener">rea.tools/showcase/notion/</a> <span class="source-meta">— Notion IPC 与 copy ID</span></li>
+              <li><a href="https://github.com/morluto/morluto/blob/HEAD/README.md" target="_blank" rel="noopener">github.com/morluto/morluto/blob/HEAD/README.md</a> <span class="source-meta">— 维护者自述</span></li>
+            </ol>
+          </div>
+          <div class="source-group">
+            <h3>SECONDARY / INDEPENDENT</h3>
+            <ol>
+              <li><a href="https://startupfortune.com/an-ai-agent-that-reverse-engineers-any-software-just-hit-number-one-on-github/" target="_blank" rel="noopener">startupfortune.com/...reverse-engineers-any-software...</a> <span class="source-meta">— 24h 增长与媒体叙事</span></li>
+              <li><a href="https://dev.to/itxtayab/an-agent-that-reverse-engineers-by-guessing-is-worse-than-useless-52bg" target="_blank" rel="noopener">dev.to/...reverse-engineers-by-guessing...</a> <span class="source-meta">— 起源、139 tools、证据合同</span></li>
+              <li><a href="https://www.devpik.com/open-source/rea" target="_blank" rel="noopener">devpik.com/open-source/rea</a> <span class="source-meta">— 模型数据政策、Ghidra timeout</span></li>
+              <li><a href="https://kingy.ai/blog/reverse-engineer-anything-ai-rea-guide/" target="_blank" rel="noopener">kingy.ai/...rea-guide/</a> <span class="source-meta">— 独立复现、14 cases、907KB evidence</span></li>
+              <li><a href="https://bitcoinversus.tech/2026/10/09/rea-reverse-engineer-anything-ai-agents-ghidra-hopper-mcp/" target="_blank" rel="noopener">bitcoinversus.tech/...rea...</a> <span class="source-meta">— 34k stars 与 roadmap 限制</span></li>
+              <li><a href="https://www.youtube.com/watch?v=ygbgiLqKTwA" target="_blank" rel="noopener">YouTube · Is Reverse Engineering Solved by AI?</a> <span class="source-meta">— 57k stars、npm、vault demo；视频口径</span></li>
+              <li><a href="https://github.com/bethington/ghidra-mcp/releases" target="_blank" rel="noopener">github.com/bethington/ghidra-mcp/releases</a> <span class="source-meta">— 251 / 272 tools 版本差异</span></li>
+              <li><a href="https://www.wsj.com/world/asia/hackers-use-chinese-ai-tool-to-hit-south-korean-banks-exposing-new-risk-5d4d3885" target="_blank" rel="noopener">wsj.com/...south-korean-banks...</a> <span class="source-meta">— Artex 银行事件</span></li>
+            </ol>
+          </div>
+          <div class="callout warning">
+            <strong>仍未验证</strong>
+            “约 97 个 CLI commands”未找到对应公开文本（二手口径为 94）；“150MB App → 577MB JSON”只见于视频；ghidra-mcp 的“215 tools”与 release 页 251/272 不符；中国法域部分未深挖一手法源；vault test 仅为简化演示。
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="footer-inner"><span>REA 技术尽调 · 资料快照 2026-10-11</span><span>结论与数值均保留来源等级和限制</span></div></footer>
+
+  <script>
+    (function () {
+      var progress = document.getElementById('progress');
+      var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+      var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+      function update() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progress.style.width = pct + '%';
+        var current = sections[0];
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].getBoundingClientRect().top <= 120) current = sections[i];
+        }
+        links.forEach(function (a) { a.classList.toggle('active', current && a.getAttribute('href') === '#' + current.id); });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
+</body>
+</html>
