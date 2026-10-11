@@ -5,6 +5,10 @@
 > - 原项目：[morluto/rea](https://github.com/morluto/rea)（MIT）· 官网 [rea.tools](https://rea.tools/)
 > - 调研时间：2026-10-11 · 标注说明：= 来自 repo README / releases / 官方文档 / rea.tools；= 媒体、博客、YouTube 等二手来源
 > - 本报告为独立第三方调研，与原项目无关
+>
+> 交互版本：
+> - 📄 [report.html](./report.html)——完整交互调研页面（可直接浏览器打开）
+> - 🗺️ [mindmap.html](./mindmap.html)——可交互折叠思维导图
 
 ## TL;DR（5 条硬发现）
 
