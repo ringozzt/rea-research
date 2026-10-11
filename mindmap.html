@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REA（Reverse Engineer Anything）· 交互思维导图</title>
+<style>
+  :root { --bg:#0f1419; --panel:#182028; --line:#2b3642; --text:#d7dee6; --dim:#8b98a5; --acc:#4cc38a; --warn:#f5a524; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  header { padding:28px 32px 8px; max-width:1100px; margin:0 auto; }
+  header h1 { margin:0 0 6px; font-size:24px; }
+  header p { margin:0; color:var(--dim); font-size:14px; }
+  header a { color:var(--acc); text-decoration:none; }
+  #tree { max-width:1100px; margin:0 auto; padding:16px 32px 64px; }
+  ul { list-style:none; margin:0; padding-left:22px; border-left:1px solid var(--line); }
+  #tree > ul { border-left:none; padding-left:0; }
+  li { margin:6px 0; }
+  .node { display:inline-block; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:14px; cursor:pointer; user-select:none; }
+  .node:hover { border-color:var(--acc); }
+  .node .tag { font-size:11px; border-radius:4px; padding:1px 6px; margin-left:8px; vertical-align:1px; }
+  .tag-p { background:#123a2a; color:var(--acc); }
+  .tag-s { background:#3a2f12; color:var(--warn); }
+  .node .caret { color:var(--dim); margin-right:6px; font-size:11px; }
+  .collapsed > ul { display:none; }
+  .leaf { cursor:default; }
+  .leaf:hover { border-color:var(--line); }
+  .legend { max-width:1100px; margin:0 auto; padding:0 32px; color:var(--dim); font-size:12px; }
+  footer { max-width:1100px; margin:0 auto; padding:0 32px 40px; color:var(--dim); font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>REA（Reverse Engineer Anything）· 交互思维导图</h1>
+  <p>点击节点展开 / 折叠 · 数据来源见 <a href="https://github.com/ringozzt/rea-research">rea-research 仓库 README</a> · 调研时间 2026-10-11</p>
+</header>
+<p class="legend"><span class="tag tag-p" style="font-size:11px;border-radius:4px;padding:1px 6px;">P</span> 一手来源（repo/官方文档）　<span class="tag tag-s" style="font-size:11px;border-radius:4px;padding:1px 6px;">S</span> 二手来源（媒体/博客/视频）</p>
+<div id="tree"><ul id="root"></ul></div>
+<footer>独立第三方调研，与 morluto/rea 项目无关。star 数为快照，持续变化中。</footer>
+<script>
+const T = (t, tag, children) => ({t, tag, c: children || []});
+const data = [
+  T("是什么", "P", [
+    T("MCP server + CLI，让 AI coding agent 无源码逆向软件"),
+    T("工作流：反编译 → 追踪 → 重建"),
+    T("MIT 开源 · morluto/rea · rea.tools"),
+  ]),
+  T("作者 morluto（化名）", "S", [
+    T("自述主攻 AI math，声称解决 Erdos problem #81"),
+    T("工具线：Jacobian / LeanToken / flameox"),
+    T("前身 betterBinaryMCP（2026-04，Hopper MCP）", "P"),
+  ]),
+  T("架构：编排层而非反编译器", "P", [
+    T("自己不做反编译，能力来自用户自备的 Hopper / Ghidra / IDA"),
+    T("IDA 侧基于开源 ida-pro-mcp"),
+    T("证据契约（核心创新）：result + evidence_id + limitations/unknowns，可导出引用比较，fail-closed"),
+    T("133→139 MCP tools，26 providers：JADX / Binwalk / CDP / pwntools / LLDB / EVMole…"),
+    T("支持：native / JS-Electron / .NET / APK / firmware / 网站 / HAR…"),
+  ]),
+  T("爆发", "S", [
+    T("10-07 发布，24h +2,956 stars"),
+    T("10-08 登顶 GitHub trending #1"),
+    T("10-11：79,124 stars / 17,066 forks"),
+    T("npm 周下载仅约 1.3k —— 围观远大于使用"),
+    T("Matthew Berman 发 thread 称 “Software is done”（推广者非作者）"),
+  ]),
+  T("展示案例", "P", [
+    T("DX-Ball：3,205 行为测试全过，63 字节全匹配 —— 逐函数验证，非整程序克隆"),
+    T("Notion：clipboard IPC 追踪，发现 hidden copy ID"),
+    T("kingy.ai 独立复现 14 cases 全过；不证明混淆二进制有效", "S"),
+  ]),
+  T("信任模型", "P", [
+    T("全本地分析，二进制不上传"),
+    T("“This is not a sandbox” —— 不防同用户恶意进程"),
+    T("结果经 agent 流向模型供应商：本地 ≠ 全程私密", "S"),
+    T("无币声明：未发行任何 token"),
+  ]),
+  T("自述限制", "P", [
+    T("不恢复原始源码，不整程序克隆"),
+    T("静态分析 ≠ 运行时证明"),
+    T("混淆 / 加壳 / 对抗分析仍是硬边界"),
+  ]),
+  T("法律与双重用途", "S", [
+    T("出生在 Artex 韩国银行案（7 家机构，68,000 人泄露）舆论余波里"),
+    T("美国 DMCA §1201(f) / 欧盟 2009/24/EC Art.6 有互操作例外；中国无成文对等例外"),
+    T("项目立场：lawful research，用户自负授权合规", "P"),
+  ]),
+  T("竞争格局", null, [
+    T("ghidra-mcp：272 tools，单引擎（Ghidra）", "S"),
+    T("传统工具：人用 GUI，各自为战"),
+    T("REA 护城河 = 证据模型 + 跨层覆盖，而非 tool 数量"),
+  ]),
+  T("为什么重要", null, [
+    T("“The old protection was cost”：逆向从专家小时变成 agent 分钟", "S"),
+    T("客户端功能逻辑的隐性保密贬值；壁垒转向服务端"),
+    T("安全团队双刃剑：快速理解样本 vs 低成本侦察"),
+  ]),
+];
+function render(nodes, parent) {
+  nodes.forEach(n => {
+    const li = document.createElement("li");
+    const div = document.createElement("div");
+    div.className = "node" + (n.c.length ? "" : " leaf");
+    div.innerHTML = (n.c.length ? '<span class="caret">▾</span>' : "") +
+      n.t + (n.tag ? `<span class="tag tag-${n.tag.toLowerCase()}">${n.tag}</span>` : "");
+    if (n.c.length) div.onclick = e => {
+      if (e.target.closest(".node") !== div) return;
+      li.classList.toggle("collapsed");
+      div.querySelector(".caret").textContent = li.classList.contains("collapsed") ? "▸" : "▾";
+    };
+    li.appendChild(div);
+    if (n.c.length) { const ul = document.createElement("ul"); render(n.c, ul); li.appendChild(ul); }
+    parent.appendChild(li);
+  });
+}
+render(data, document.getElementById("root"));
+</script>
+</body>
+</html>
