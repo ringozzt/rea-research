@@ -10,12 +10,20 @@
 > - 📄 [report.html](./report.html)——完整交互调研页面（可直接浏览器打开）
 > - 🗺️ [mindmap.html](./mindmap.html)——可交互折叠思维导图
 
+## 2026-10-15 增量更新
+
+- **热度继续加速**：10-11 为 79,124 stars / 17,066 forks，10-15 已达 **247,148 stars / 61,957 forks**——四天 3.1 倍；10-14 依然 GitHub trending #1，**单日 +41,187 stars**（10-08 登顶时单日 +7,744）。🟢
+- **"围观/使用比"反转**：npm 包 `rea-agents` 周下载从约 1.3k 涨到 **231,579**——star 曲线和真实安装曲线对上了，不再是纯围观。🟢
+- **发版节奏**：6.3.0（10-09，一批 BREAKING CHANGES 收紧证据契约）→ 6.4.0（10-11，Android ADB 真机检查、JEB MCP、Apktool）→ 6.5.0（10-14，JS 源码精确选择、code-split 跨包恢复、Evidence 摘要浏览）；PR 已排到 #3833，813 open issues。🟢
+- **社区实测**：YouTube 有人用 REA 逆向 Obsidian——4 分钟重建 quick switcher 排序逻辑，4,915 次查询逐条验证与原版一致；但当要求列出"App 背后能做什么"时，Claude 的安全分类器中途叫停了写入。🟡
+- **谱系定位**：agentbreaking 做了横向对比——GhidraMCP（11k stars）、ida-pro-mcp（12.6k）2025 年 3 月就已实现"agent 接反编译器"，REA 赢的不是首创，而是广度+打包+证据契约。🟡
+
 ## TL;DR（5 条硬发现）
 
 1. **REA 自己不做反编译**——原生能力 100% 来自用户自备的 Hopper / Ghidra / IDA（IDA 侧基于开源 ida-pro-mcp）。它真正的新东西是**统一的证据契约**（result + evidence_id + limitations/unknowns，可导出、引用、比较）与**跨层追踪**（Electron renderer → IPC → main → native addon 一条链走完）。
 2. **DX-Ball 的 3,205 / 63 是逐函数验证，不是整程序克隆**：1996 年游戏的单个函数经"反编译缺口 → 指令补全 → 常量读取 → C 重写 → VC4.0 重编"达到字节一致，33/55 个函数字节匹配——证明方法有效，也划定了边界（未混淆目标、单函数粒度）。
 3. **"This is not a sandbox" 是白纸黑字的信任模型**：分析全本地、二进制不上传，但 SECURITY.md 明确它不防同用户恶意进程；且工具结果经 agent 流向模型供应商——**本地分析 ≠ 全程私密**，这是企业采用前必须过的合规项。
-4. **爆发速度与"围观/使用比"**：repo 4 月创建（前身 betterBinaryMCP），10-07 发布后 24h +2,956 stars、10-08 登顶 trending #1、10-11 达 79,124 stars / 17,066 forks；但 npm 周下载仅约 1.3k——star 远超真实安装，热度含大量围观成分。
+4. **爆发速度与"围观/使用比"反转**：repo 4 月创建（前身 betterBinaryMCP），10-07 发布后 24h +2,956 stars、10-08 登顶 trending #1、10-11 达 79,124 stars / 17,066 forks；**10-15 已达 247,148 stars / 61,957 forks（四天 3.1 倍），10-14 仍居 trending #1（单日 +41,187）**。npm 周下载从约 1.3k 涨到 **231,579**——star 曲线和真实安装曲线对上了。
 5. **它出生在 Artex 银行入侵案的舆论余波里**：2026-10-06/07 韩国 7 家金融机构被 AI agent 攻陷（约 68,000 人数据泄露）→ 10-07 REA 5.0.0 发布 → 10-08 登顶 trending。REA 自身立场是"lawful research + 用户自负授权"，但事件说明"agent × 开源工具"降低攻击门槛已是进行时——这正是它"the old protection was cost"论点最锋利、也最具争议的注脚。
 
 ## 1. 项目基础
@@ -49,11 +57,14 @@
 | 4.1.0 | 2026-10-06 | headless JADX（APK）、Binwalk/Unblob（firmware）、IDA 只读支持 |
 | 5.0.0 | 2026-10-07 | 133 MCP tools，正式发布 |
 | 6.0.0 | 2026-10-08 | EVM、离线 ELF、LLDB 观测、Windows PE via Ghidra |
+| 6.3.0 | 2026-10-09 | 一批 BREAKING CHANGES：证据契约收紧（capture/browser/process/contracts 各维度必填） |
 | 6.4.0 | 2026-10-11 | ADB 设备检查、JEB MCP、Apktool |
+| 6.5.0 | 2026-10-14 | JS 源码精确选择、code-split 跨包恢复、Evidence 摘要浏览 |
 
 - 10-07：发布，24h 内 +2,956 stars；10-08 登顶 GitHub trending #1；10-11：**79,124 stars / 17,066 forks**；Hacker News 720 points / 311 comments。
+- 10-14：**仍居 trending #1，单日 +41,187 stars**；10-15：**247,148 stars / 61,957 forks**（四天 3.1 倍）。
 - 传播推手：Matthew Berman 10-08 发 thread 称 "Software is done"（他是使用者/推广者**不是**作者）。
-- 冷水：npm 周下载仅约 1.3k——star 远超真实安装。
+- npm 周下载从约 1.3k 涨到 **231,579**——"围观远大于使用"已反转。
 
 ## 4. 展示案例
 
@@ -110,6 +121,7 @@
 - **安装**：`npx rea-agents setup`（推荐）/ `npm install --global rea-agents` / `rea doctor` 诊断全部注册与引擎。
 - **支持 14 种 agents**：Claude Code、Claude Desktop、Codex、Cursor、Gemini CLI、Windsurf、Devin、OpenCode、GitHub Copilot CLI 等。
 - **文档**：19 种语言 README（含简中）；网站 guides 覆盖 setup、native/application/browser/Android/firmware/EVM 全链路；Discord 社区 + GitHub Q&A。
+- **社区实测**（2026-10-15 新增）：YouTube 有 Obsidian quick switcher 重建实测（4 分钟、4,915 查询验证）；agentbreaking 做了与 GhidraMCP / ida-pro-mcp 的谱系对比，结论是 REA 赢在广度+打包+证据契约而非首创。🟡
 
 ## 思维导图
 
@@ -150,8 +162,10 @@ mindmap
       24h +2,956 stars
       10-08 trending #1
       10-11 79k stars/17k forks
-      npm 周下载仅 ~1.3k
-      围观远大于使用
+      10-15 247k stars/62k forks(四天 3.1x)
+      10-14 仍 trending #1 单日 +41k
+      npm 周下载 1.3k → 231k
+      围观/使用比反转
     案例
       DX-Ball
         3,205 行为测试全过
@@ -220,7 +234,7 @@ mindmap
 - "150MB app → 577MB JSON"：出自 YouTube 章节，无文本出处；但"输出沉重"有 kingy.ai 实证（1,648B → 907KB）佐证现象存在。
 - ghidra-mcp "215 tools"：实测其 releases 页为 251/272，早期数字可能过时。
 - 中国法域 RE 法律 landscape：本次仅作通识背景，未深挖一手来源。
-- star 数为快照（2026-10-11），持续快速变化中。
+- star 数为快照（初版 2026-10-11，10-15 增量更新），持续快速变化中。
 
 ## 调研方法
 
